@@ -13,7 +13,10 @@ export default function Settings() {
   const value = draft ?? stored ?? "";
   const hasKey = !!stored;
 
+  const invalid = value.trim() !== "" && !value.trim().startsWith("sk-");
+
   function save() {
+    if (invalid) return;
     saveApiKey(value.trim());
     setDraft(null);
     setSaved(true);
@@ -60,10 +63,12 @@ export default function Settings() {
         </div>
       </label>
 
+      {invalid && <p className="-mt-3 text-sm text-accent">OpenAI API Key 應以 sk- 開頭。</p>}
+
       <div className="flex flex-wrap items-center gap-3">
         <button
           onClick={save}
-          disabled={!value.trim()}
+          disabled={!value.trim() || invalid}
           className="rounded-full bg-ink px-6 py-3 font-medium text-paper transition hover:bg-accent disabled:cursor-not-allowed disabled:opacity-40"
         >
           儲存

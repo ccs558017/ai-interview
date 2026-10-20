@@ -87,21 +87,34 @@ export default function Home() {
     setError("");
   }
 
+  if (apiKey === null) {
+    return <main className="flex-1" />;
+  }
+
+  if (!apiKey) {
+    return (
+      <main className="mx-auto flex w-full max-w-xl flex-1 flex-col items-center justify-center gap-5 px-6 py-24 text-center">
+        <div className="grid h-14 w-14 place-items-center rounded-full bg-ink text-2xl text-paper">🔑</div>
+        <h1 className="font-display text-3xl font-black">請先設定 OpenAI API Key</h1>
+        <p className="leading-relaxed text-muted">
+          Rehearse 使用你自己的 OpenAI API Key 來進行面試。設定完成後,才能開始練習。
+        </p>
+        <Link
+          href="/settings"
+          className="rounded-full bg-ink px-8 py-3 font-medium text-paper transition hover:bg-accent"
+        >
+          前往設定 →
+        </Link>
+      </main>
+    );
+  }
+
   return (
     <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-5 px-6 py-14">
       <div>
         <p className="mb-2 text-sm text-accent">練習室</p>
         <h1 className="font-display text-4xl font-black">AI 面試模擬器</h1>
       </div>
-
-      {apiKey === "" && (
-        <div className="rounded-2xl border border-accent/40 bg-accent/10 p-4 text-sm">
-          還沒設定 OpenAI API Key。
-          <Link href="/settings" className="ml-1 font-medium text-accent underline underline-offset-4">
-            前往設定 →
-          </Link>
-        </div>
-      )}
 
       {!started ? (
         <>
