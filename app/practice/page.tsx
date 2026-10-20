@@ -32,6 +32,10 @@ export default function Home() {
   const [error, setError] = useState("");
 
   async function send(next: Message[]) {
+    if (!apiKey) {
+      setError("尚未設定 OpenAI API Key,請先到「設定」輸入。");
+      return;
+    }
     setLoading(true);
     setError("");
     try {
@@ -58,12 +62,16 @@ export default function Home() {
   }
 
   function start() {
-    if (!jobDescription.trim() || !apiKey) return;
+    if (!jobDescription.trim()) return;
     send([]);
   }
 
   function answer() {
     if (!input.trim()) return;
+    if (!apiKey) {
+      setError("尚未設定 OpenAI API Key,請先到「設定」輸入。");
+      return;
+    }
     const next: Message[] = [...messages, { role: "user", content: input.trim() }];
     setMessages(next);
     setInput("");
@@ -120,7 +128,7 @@ export default function Home() {
           <button
             className="rounded-full bg-ink px-6 py-3 font-medium text-paper transition hover:bg-accent disabled:cursor-not-allowed disabled:opacity-40"
             onClick={start}
-            disabled={loading || !apiKey || !jobDescription.trim()}
+            disabled={loading || !jobDescription.trim()}
           >
             {loading ? "準備中..." : "開始面試"}
           </button>
@@ -179,7 +187,16 @@ export default function Home() {
         </>
       )}
 
-      {error && <p className="text-accent">{error}</p>}
+      {error && (
+        <p className="text-accent">
+          {error}
+          {!apiKey && (
+            <Link href="/settings" className="ml-1 underline underline-offset-4">
+              前往設定 →
+            </Link>
+          )}
+        </p>
+      )}
     </main>
   );
 }
