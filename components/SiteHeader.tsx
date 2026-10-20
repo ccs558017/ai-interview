@@ -21,12 +21,17 @@ export function SiteHeader() {
           <Link href="/#how" className="transition hover:text-ink">運作方式</Link>
           <Link href="/#faq" className="transition hover:text-ink">常見問題</Link>
         </nav>
-        <Link
-          href="/practice"
-          className="rounded-full bg-ink px-5 py-2 text-sm font-medium text-paper transition hover:bg-accent"
-        >
-          開始練習
-        </Link>
+        <div className="flex items-center gap-3">
+          <Link href="/settings" className="text-sm text-muted transition hover:text-ink">
+            設定
+          </Link>
+          <Link
+            href="/practice"
+            className="rounded-full bg-ink px-5 py-2 text-sm font-medium text-paper transition hover:bg-accent"
+          >
+            開始練習
+          </Link>
+        </div>
       </div>
     </header>
   );

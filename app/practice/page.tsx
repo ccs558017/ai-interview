@@ -1,6 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
+import { API_KEY_HEADER, useApiKey } from "@/lib/apiKey";
 
 type Message = { role: "assistant" | "user"; content: string };
 type Report = {
@@ -18,6 +20,7 @@ type Report = {
 };
 
 export default function Home() {
+  const apiKey = useApiKey();
   const [totalQuestions, setTotalQuestions] = useState(3);
   const [jobDescription, setJobDescription] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
@@ -34,7 +37,7 @@ export default function Home() {
     try {
       const res = await fetch("/interview", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", [API_KEY_HEADER]: apiKey ?? "" },
         body: JSON.stringify({ jobDescription, messages: next, totalQuestions }),
       });
       const data = await res.json();
@@ -55,7 +58,7 @@ export default function Home() {
   }
 
   function start() {
-    if (!jobDescription.trim()) return;
+    if (!jobDescription.trim() || !apiKey) return;
     send([]);
   }
 
@@ -83,6 +86,15 @@ export default function Home() {
         <h1 className="font-display text-4xl font-black">AI 面試模擬器</h1>
       </div>
 
+      {apiKey === "" && (
+        <div className="rounded-2xl border border-accent/40 bg-accent/10 p-4 text-sm">
+          還沒設定 OpenAI API Key。
+          <Link href="/settings" className="ml-1 font-medium text-accent underline underline-offset-4">
+            前往設定 →
+          </Link>
+        </div>
+      )}
+
       {!started ? (
         <>
           <textarea
@@ -108,7 +120,7 @@ export default function Home() {
           <button
             className="rounded-full bg-ink px-6 py-3 font-medium text-paper transition hover:bg-accent disabled:cursor-not-allowed disabled:opacity-40"
             onClick={start}
-            disabled={loading || !jobDescription.trim()}
+            disabled={loading || !apiKey || !jobDescription.trim()}
           >
             {loading ? "準備中..." : "開始面試"}
           </button>

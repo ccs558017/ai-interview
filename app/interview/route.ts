@@ -48,9 +48,9 @@ questions 需依序包含全部 ${total} 題。不要再提出新的問題。`;
 }
 
 export async function POST(request: Request) {
-  const apiKey = process.env.OPENAI_API_KEY;
+  const apiKey = request.headers.get("x-openai-api-key")?.trim();
   if (!apiKey) {
-    return Response.json({ error: "缺少 OPENAI_API_KEY" }, { status: 500 });
+    return Response.json({ error: "請先到「設定」輸入你的 OpenAI API Key" }, { status: 401 });
   }
 
   let body: {
@@ -100,6 +100,12 @@ export async function POST(request: Request) {
   if (!res.ok) {
     const detail = await res.text();
     console.error("OpenAI error:", res.status, detail);
+    if (res.status === 401) {
+      return Response.json({ error: "OpenAI API Key 無效,請到「設定」檢查" }, { status: 401 });
+    }
+    if (res.status === 429) {
+      return Response.json({ error: "OpenAI 額度不足或請求過於頻繁" }, { status: 429 });
+    }
     return Response.json({ error: "OpenAI 請求失敗" }, { status: 502 });
   }
 
